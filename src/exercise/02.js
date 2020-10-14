@@ -4,16 +4,31 @@
 import React from 'react'
 
 // extra 3 - custom hook
-function useLocalStorageState(key, defaultValue = '') {
+function useLocalStorageState(key, defaultValue = '', { // extra 4 video - options object which allows custom serialization
+    serialize = JSON.stringify,
+    deserialize = JSON.parse
+} = {}) {
     // take the key as an argument so can be used with other components (not just for names)
     const [state, setState] = React.useState(() => { // extra 1 - passed function to useState so that it doesnt check local storage each time for a value we only needed once
         const localStorageValue = window.localStorage.getItem(key);
-        return localStorageValue ? JSON.parse(localStorageValue) : defaultValue; // extra 4 - parse local storage value if it exists
+        if (localStorageValue) {
+            return deserialize(localStorageValue);
+        } else {
+            return typeof defaultValue === 'function' ? defaultValue() : defaultValue; // extra 4 video - can pass a function as default value if expensive intial value (just like we can with setState)
+        }
     });
 
+    // extra 4 video -  what if key changes?
+    const prevKeyRef = React.useRef(key);
+
     React.useEffect(() => {
-        window.localStorage.setItem(key, JSON.stringify(state)); // extra 4 - stringify incase its not a string
-    }, [key, state]); // extra 2 adding dependency to prevent re-run on every render
+        const prevKey = prevKeyRef.current;
+        if (prevKey !== key) {
+            window.localStorage.removeItem(prevKey); // delete the old key from local storage
+        }
+        prevKeyRef.current = key; // set the current to the new key
+        window.localStorage.setItem(key, serialize(state)); // extra 4 - stringify incase its not a string
+    }, [key, state, serialize]); // extra 2 adding dependency to prevent re-run on every render
 
     return [state, setState];
 };
