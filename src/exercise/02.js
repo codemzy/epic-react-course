@@ -7,11 +7,12 @@ import React from 'react'
 function useLocalStorageState(key, defaultValue = '') {
     // take the key as an argument so can be used with other components (not just for names)
     const [state, setState] = React.useState(() => { // extra 1 - passed function to useState so that it doesnt check local storage each time for a value we only needed once
-        return window.localStorage.getItem(key) || defaultValue;
+        const localStorageValue = window.localStorage.getItem(key);
+        return localStorageValue ? JSON.parse(localStorageValue) : defaultValue; // extra 4 - parse local storage value if it exists
     });
 
     React.useEffect(() => {
-        window.localStorage.setItem(key, state);
+        window.localStorage.setItem(key, JSON.stringify(state)); // extra 4 - stringify incase its not a string
     }, [key, state]); // extra 2 adding dependency to prevent re-run on every render
 
     return [state, setState];
@@ -39,7 +40,7 @@ function Greeting({initialName = ''}) {
 }
 
 function App() {
-    return <Greeting />
+    return <Greeting initialName="Codemzy" />
 }
 
 export default App
