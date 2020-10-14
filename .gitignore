@@ -1,0 +1,9 @@
+/*
+
+# Except .gitignore
+!.gitignore
+
+# Except exercise folder
+!src/
+src/*
+!src/exercise/
