@@ -3,9 +3,9 @@
 
 import React from 'react'
 
-function Greeting() {
-    
-  const [name, setName] = React.useState('');
+function Greeting({initialName = ''}) { // extra credit (accept initialName prop) and added default of '' incase no intitial value (so not undefined)
+
+  const [name, setName] = React.useState(initialName);
 
   function handleChange(event) {
     // 🐨 update the name here based on event.target.value
@@ -16,7 +16,7 @@ function Greeting() {
     <div>
       <form>
         <label htmlFor="name">Name: </label>
-        <input onChange={handleChange} id="name" />
+        <input value={name} onChange={handleChange} id="name" />
       </form>
       {name ? <strong>Hello {name}</strong> : 'Please type your name'}
     </div>
@@ -24,7 +24,7 @@ function Greeting() {
 }
 
 function App() {
-  return <Greeting />
+  return <Greeting initialName="Codemzy" />
 }
 
 export default App
