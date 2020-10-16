@@ -56,6 +56,14 @@ function PokemonInfo({pokemonName}) {
   }
 }
 
+function ErrorComponent({error}) {
+    return (
+        <div role="alert">
+            There was an error: <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+        </div>
+    );
+};
+
 function App() {
   const [pokemonName, setPokemonName] = React.useState('')
 
@@ -68,7 +76,7 @@ function App() {
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <ErrorBoundary><PokemonInfo pokemonName={pokemonName} /></ErrorBoundary>
+        <ErrorBoundary FallbackComponent={ErrorComponent}><PokemonInfo pokemonName={pokemonName} /></ErrorBoundary>
       </div>
     </div>
   )
