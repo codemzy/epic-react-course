@@ -2,6 +2,7 @@
 // http://localhost:3000/isolated/exercise/06.js
 
 import React from 'react'
+import ErrorBoundary from './ErrorBoundary';
 // 🐨 you'll want the following additional things from '../pokemon':
 // fetchPokemon: the function we call to get the pokemon info
 // PokemonInfoFallback: the thing we show while we're loading the pokemon info
@@ -44,12 +45,15 @@ function PokemonInfo({pokemonName}) {
     }
   }, [pokemonName]);
 
-  return (
-    state.status === "rejected" ? <div role="alert">There was an error: <pre style={{whiteSpace: 'normal'}}>{state.error.message}</pre></div> :
-    state.status === "idle" ? 'Submit a pokemon' :
-    state.status === "pending" ? <PokemonInfoFallback name={pokemonName} /> :
-    <PokemonDataView pokemon={state.pokemon} />
-  );
+  if (state.status === "rejected") {
+    throw state.error;
+  } else {
+    return (
+        state.status === "idle" ? 'Submit a pokemon' :
+        state.status === "pending" ? <PokemonInfoFallback name={pokemonName} /> :
+        <PokemonDataView pokemon={state.pokemon} />
+    );
+  }
 }
 
 function App() {
@@ -64,7 +68,7 @@ function App() {
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <PokemonInfo pokemonName={pokemonName} />
+        <ErrorBoundary><PokemonInfo pokemonName={pokemonName} /></ErrorBoundary>
       </div>
     </div>
   )
