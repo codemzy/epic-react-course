@@ -2,7 +2,7 @@
 // http://localhost:3000/isolated/exercise/06.js
 
 import React from 'react'
-import ErrorBoundary from './ErrorBoundary';
+import {ErrorBoundary} from 'react-error-boundary';
 // 🐨 you'll want the following additional things from '../pokemon':
 // fetchPokemon: the function we call to get the pokemon info
 // PokemonInfoFallback: the thing we show while we're loading the pokemon info
@@ -76,7 +76,7 @@ function App() {
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <ErrorBoundary FallbackComponent={ErrorComponent} key={pokemonName}><PokemonInfo pokemonName={pokemonName} /></ErrorBoundary>
+        <ErrorBoundary FallbackComponent={ErrorComponent} resetKeys={[pokemonName]}><PokemonInfo pokemonName={pokemonName} /></ErrorBoundary>
       </div>
     </div>
   )
