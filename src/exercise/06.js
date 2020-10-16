@@ -25,28 +25,30 @@ function PokemonInfo({pokemonName}) {
   //   3. pokemon: <PokemonDataView pokemon={pokemon} />
 
   // state
-  const [status, setStatus] = React.useState('idle');
-  const [pokemon, setPokemon] = React.useState(null);
-  const [error, setError] = React.useState(false);
+  // extra 3 - state to object because react can;t batch state updates in async callbacks so this ensure status update happens
+  // at the same time as pokemon update
+  const [state, setState] = React.useState({
+    status: 'idle',
+    pokemon: null,
+    error: false 
+  });
 
   React.useEffect(() => {
     if (pokemonName) {
-        setStatus("pending");
+        setState({ status: "pending" });
         fetchPokemon(pokemonName).then(function(pokemonData) {
-            setPokemon(pokemonData);
-            setStatus("resolved");
+            setState({ status: "resolved", pokemon: pokemonData});
         }).catch(function(error) {
-            setStatus("rejected");
-            setError(error);
+            setState({ status: "rejected", error: error});
         });
     }
   }, [pokemonName]);
 
   return (
-    status === "rejected" ? <div role="alert">There was an error: <pre style={{whiteSpace: 'normal'}}>{error.message}</pre></div> :
-    status === "idle" ? 'Submit a pokemon' :
-    status === "pending" ? <PokemonInfoFallback name={pokemonName} /> :
-    <PokemonDataView pokemon={pokemon} />
+    state.status === "rejected" ? <div role="alert">There was an error: <pre style={{whiteSpace: 'normal'}}>{state.error.message}</pre></div> :
+    state.status === "idle" ? 'Submit a pokemon' :
+    state.status === "pending" ? <PokemonInfoFallback name={pokemonName} /> :
+    <PokemonDataView pokemon={state.pokemon} />
   );
 }
 
