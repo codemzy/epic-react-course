@@ -29,7 +29,7 @@ function PokemonInfo({pokemonName}) {
   // extra 3 - state to object because react can;t batch state updates in async callbacks so this ensure status update happens
   // at the same time as pokemon update
   const [state, setState] = React.useState({
-    status: 'idle',
+    status: pokemonName ? 'pending' : 'idle', // if passed a name then set to pending as will fetch data
     pokemon: null,
     error: false 
   });
@@ -56,10 +56,12 @@ function PokemonInfo({pokemonName}) {
   }
 }
 
-function ErrorComponent({error}) {
+// error and resetErrorBoundary passed from ErrorBoundary
+function ErrorComponent({error, resetErrorBoundary}) {
     return (
         <div role="alert">
             There was an error: <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+            <button onClick={resetErrorBoundary}>Try Again</button>
         </div>
     );
 };
@@ -71,12 +73,17 @@ function App() {
     setPokemonName(newPokemonName)
   }
 
+    // reset runs on reset of error boundary (passes as onReset prop to ErrorBoundary)
+  function handleReset() {
+      setPokemonName('');
+  };
+
   return (
     <div className="pokemon-info-app">
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <ErrorBoundary FallbackComponent={ErrorComponent} resetKeys={[pokemonName]}><PokemonInfo pokemonName={pokemonName} /></ErrorBoundary>
+        <ErrorBoundary FallbackComponent={ErrorComponent} onReset={handleReset}><PokemonInfo pokemonName={pokemonName} /></ErrorBoundary>
       </div>
     </div>
   )
