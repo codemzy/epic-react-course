@@ -12,7 +12,7 @@ import React from 'react'
 function Board() {
     // state
     const [squares, setSquares] = React.useState(() => {
-        JSON.parse(window.localStorage.getItem('squares')) || Array(9).fill(null)
+        return JSON.parse(window.localStorage.getItem('squares')) || Array(9).fill(null);
     });
     // vars
     const nextValue = calculateNextValue(squares)
