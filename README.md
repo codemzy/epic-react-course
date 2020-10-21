@@ -9,6 +9,15 @@ Each level is it's own branch. Exercises only here.
 
 Clone the original repo and create a branch for that level. Then add the .gitignore file to it. Then run `git rm -r --cached .` to remove cached git folders and files. Now we can do the set up and exercises.
 
+```
+// check origin
+git remote -v
+// change origin
+git remote set-url origin https://github.com/codemzy/epic-react-course.git
+// verify
+git remote -v
+```
+
 Once the level is completed try `git mv src [level-name]` to rename the folder and merge to master?
 
 Get the repos from:
