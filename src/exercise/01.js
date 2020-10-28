@@ -19,23 +19,31 @@ function Counter({initialCount = 0, step = 1}) {
 //   // The 2nd argument is called "newState" - the value passed to setCount
 //   const increment = () => changeCount(step)
 
-    // extra 2
-    const [state, setState] = React.useReducer(countReducer, {
+    const [state, dispatch] = React.useReducer(countReducer, {
         count: initialCount,
-    });
+    })
 
-    // extra 3
+    // // extra 3
+    // function countReducer(state, action) {
+    //     return {
+    //         ...state, 
+    //         ...(typeof action === "function" ? action(state) : action)
+    //     }; 
+    // };
+
+    // extra 4
     function countReducer(state, action) {
-        return {
-            ...state, 
-            ...(typeof action === "function" ? action(state) : action)
-        }; 
+        if (action.type === 'INCREMENT') {
+            return {count: state.count + action.step};
+        } else {
+            throw new Error(`Unsupported action type: ${action.type}`);
+        }
     };
 
     const {count} = state;
     // const increment = () => setState({count: count + step})
-    const increment = () =>
-    setState(currentState => ({count: currentState.count + step}))
+    // const increment = () => setState(currentState => ({count: currentState.count + step}))
+    const increment = () => dispatch({type: 'INCREMENT', step});
 
     return <button onClick={increment}>{count}</button>
 }
