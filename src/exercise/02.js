@@ -46,17 +46,17 @@ function useAsync(initialState) {
 
     // extra 3
     React.useEffect(() => {
-        mountedRef.current = true;
+        mountedRef.current = true; // component has been mounted
         return () => {
-            mountedRef.current = false;
+            mountedRef.current = false; // component has been unmounted
         };
     }, []); // only runs once
 
-    function safeDispatch(action) {
+    const safeDispatch = React.useCallback(function(...args) {
         if (mountedRef.current) {
-            dispatch(action);
+            dispatch(...args);
         }
-    };
+    }, []); // empty dependencies because useReducer dispatch function is stable
 
     // extra 2
     // run is a memoized function which accepts a promise which is calls
