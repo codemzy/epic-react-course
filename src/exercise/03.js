@@ -19,16 +19,25 @@ function CountProvider(props) {
     );
 }
 
+// extra 1 -- add a custom consumer hook to check we are in a provider
+// and display a helpful error if not
+function useCount() {
+    const countContext = React.useContext(CountContext);
+    if (!countContext) {
+        throw new Error("useCount must be used within a CountProvider")
+    }
+    return countContext;
+};
+
 function CountDisplay() {
   // 🐨 get the count from useContext with the CountContext
-  const countContext = React.useContext(CountContext);
-  const count = countContext.count;
+  const {count} = useCount();
   return <div>{`The current count is ${count}`}</div>
 }
 
 function Counter() {
   // 🐨 get the setCount from useContext with the CountContext
-  const {setCount} = React.useContext(CountContext);
+  const {setCount} = useCount();
   const increment = () => setCount(c => c + 1)
   return <button onClick={increment}>Increment count</button>
 }
