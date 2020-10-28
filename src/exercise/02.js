@@ -42,6 +42,22 @@ function useAsync(initialState) {
         ...initialState
     });
 
+    let mountedRef = React.useRef(false);
+
+    // extra 3
+    React.useEffect(() => {
+        mountedRef.current = true;
+        return () => {
+            mountedRef.current = false;
+        };
+    }, []); // only runs once
+
+    function safeDispatch(action) {
+        if (mountedRef.current) {
+            dispatch(action);
+        }
+    };
+
     // extra 2
     // run is a memoized function which accepts a promise which is calls
     // so the user doesn't need to worry about useCallback because we handle it
@@ -49,13 +65,13 @@ function useAsync(initialState) {
         if (!promise) {
             return false;
         }
-        dispatch({type: 'pending'});
+        safeDispatch({type: 'pending'});
         promise.then(
             data => {
-                dispatch({type: 'resolved', data});
+                safeDispatch({type: 'resolved', data});
             },
             error => {
-                dispatch({type: 'rejected', error});
+                safeDispatch({type: 'rejected', error});
             },
         )
     }, []);
