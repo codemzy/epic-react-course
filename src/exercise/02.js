@@ -31,6 +31,25 @@ function asyncReducer(state, action) {
   }
 };
 
+// turn extra 3 into custom hook
+function useSafeDispatch(dispatch) {
+    let mountedRef = React.useRef(false); // is the component mounted?
+    // extra 3
+    React.useEffect(() => {
+        mountedRef.current = true; // component has been mounted
+        return () => {
+            mountedRef.current = false; // component has been unmounted
+        };
+    }, []); // only runs once
+
+    return React.useCallback(function(...args) {
+        if (mountedRef.current) {
+            dispatch(...args);
+        }
+    }, [dispatch]); // now we need to add dispatch as dependency
+
+};
+
 // exercise - custom hook
 function useAsync(initialState) {
     // 🐨 so your job is to create a useAsync function that makes this work.
@@ -42,21 +61,8 @@ function useAsync(initialState) {
         ...initialState
     });
 
-    let mountedRef = React.useRef(false);
-
-    // extra 3
-    React.useEffect(() => {
-        mountedRef.current = true; // component has been mounted
-        return () => {
-            mountedRef.current = false; // component has been unmounted
-        };
-    }, []); // only runs once
-
-    const safeDispatch = React.useCallback(function(...args) {
-        if (mountedRef.current) {
-            dispatch(...args);
-        }
-    }, []); // empty dependencies because useReducer dispatch function is stable
+    // safe dispatch custom hook
+    const safeDispatch = useSafeDispatch(dispatch);
 
     // extra 2
     // run is a memoized function which accepts a promise which is calls
@@ -74,7 +80,7 @@ function useAsync(initialState) {
                 safeDispatch({type: 'rejected', error});
             },
         )
-    }, []);
+    }, [safeDispatch]);
 
     // // fetch the data
     // React.useEffect(() => {
