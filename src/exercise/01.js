@@ -24,12 +24,18 @@ function Counter({initialCount = 0, step = 1}) {
         count: initialCount,
     });
 
+    // extra 3
     function countReducer(state, action) {
-        return {...state, ...action}; 
+        return {
+            ...state, 
+            ...(typeof action === "function" ? action(state) : action)
+        }; 
     };
 
     const {count} = state;
-    const increment = () => setState({count: count + step})
+    // const increment = () => setState({count: count + step})
+    const increment = () =>
+    setState(currentState => ({count: currentState.count + step}))
 
     return <button onClick={increment}>{count}</button>
 }
