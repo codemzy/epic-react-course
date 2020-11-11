@@ -95,6 +95,8 @@ function useToggle({
 
   // extra 3 - custom hooks
   if (process.env.NODE_ENV !== 'production') { // extra 4 only use warnings if not in production
+    // this will create an error is es lint but this is the only occassion its ok to next hooks because
+    // process.env.NODE_ENV will not change for the life of the app
     useControlWarnings(controlledOn, 'on', 'useToggle');
     useReadOnlyWarnings(controlledOn, 'on', 'useToggle', Boolean(onChange), readOnly, 'readOnly', 'initialOn', 'onChange');
   }
