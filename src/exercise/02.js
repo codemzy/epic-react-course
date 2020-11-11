@@ -15,8 +15,10 @@ function Toggle({children}) {
   // 📜 https://reactjs.org/docs/react-api.html#reactchildren
   // 📜 https://reactjs.org/docs/react-api.html#cloneelement
   return React.Children.map(children, function(child) {
-    let domChild = typeof child.type === "string"; // extra 1 - accept dom component children
-    return React.cloneElement(child, domChild ? false : {on, toggle}); // if dom component don't pass the props
+    if (typeof child.type === "string") {
+        return child; // extra 1 - if dom component just return as don't need to and can't add props
+    }
+    return React.cloneElement(child, {on, toggle});
   });
 }
 
