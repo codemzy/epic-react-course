@@ -78,10 +78,13 @@ function useUser() {
 // this function. It should accept: dispatch, user, and updates
 function updateUser(dispatch, user, updates) {
     dispatch({type: 'start update', updates})
-    return userClient.updateUser(user, updates).then(
-      updatedUser => dispatch({type: 'finish update', updatedUser}),
-      error => dispatch({type: 'fail update', error}),
-    )
+    return userClient.updateUser(user, updates).then(function(updatedUser) {
+        dispatch({type: 'finish update', updatedUser});
+        return updatedUser; // added return for updated user so available in promise chain
+    }).catch(function(error) {
+        dispatch({type: 'fail update', error});
+        throw error; // throw error so calling function knows its failed
+    });
 };
 
 // export {UserProvider, useUser, updateUser}
