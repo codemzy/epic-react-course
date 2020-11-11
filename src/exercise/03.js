@@ -22,6 +22,14 @@ function Toggle(props) {
     return <ToggleContext.Provider value={{on, toggle}} {...props} />
 };
 
+function useToggle() {
+    const context = React.useContext(ToggleContext);
+    if (!context) {
+        throw new Error("You need useToggle to be inside the <Toggle /> component");
+    }
+    return React.useContext(ToggleContext);
+};
+
 // 🐨 we'll still get the children from props (as it's passed to us by the
 // developers using our component), but we'll get `on` implicitly from
 // ToggleContext now
@@ -30,20 +38,20 @@ function Toggle(props) {
 // 💰 `const context = useContext(ToggleContext)`
 // 📜 https://reactjs.org/docs/hooks-reference.html#usecontext
 function ToggleOn({children}) {
-    const toggleContext = React.useContext(ToggleContext);
-    return toggleContext.on ? children : null
+    const {on} = useToggle();
+    return on ? children : null
 }
 
 // 🐨 do the same thing to this that you did to the ToggleOn component
 function ToggleOff({children}) {
-    const toggleContext = React.useContext(ToggleContext);
-    return toggleContext.on ? null : children
+    const {on} = useToggle();
+    return on ? null : children
 }
 
 // 🐨 get `on` and `toggle` from the ToggleContext with `useContext`
 function ToggleButton(props) {
-    const toggleContext = React.useContext(ToggleContext);
-  return <Switch on={toggleContext.on} onClick={toggleContext.toggle} {...props} />
+    const {on, toggle} = useToggle();
+  return <Switch on={on} onClick={toggle} {...props} />
 }
 
 function App() {
@@ -59,6 +67,9 @@ function App() {
     </div>
   )
 };
+
+// // extra 1 - error message
+// const App = () => <ToggleButton />;
 
 export default App
 
