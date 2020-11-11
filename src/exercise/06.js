@@ -94,8 +94,10 @@ function useToggle({
   const on = onIsControlled ? controlledOn : state.on;
 
   // extra 3 - custom hooks
-  useControlWarnings(controlledOn, 'on', 'useToggle');
-  useReadOnlyWarnings(controlledOn, 'on', 'useToggle', Boolean(onChange), readOnly, 'readOnly', 'initialOn', 'onChange');
+  if (process.env.NODE_ENV !== 'production') { // extra 4 only use warnings if not in production
+    useControlWarnings(controlledOn, 'on', 'useToggle');
+    useReadOnlyWarnings(controlledOn, 'on', 'useToggle', Boolean(onChange), readOnly, 'readOnly', 'initialOn', 'onChange');
+  }
 
   // We want to call `onChange` any time we need to make a state change, but we
   // only want to call `dispatch` if `!onIsControlled` (otherwise we could get
