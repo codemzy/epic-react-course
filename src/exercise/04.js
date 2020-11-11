@@ -4,7 +4,8 @@
 import * as React from 'react'
 import {Switch} from '../switch'
 
-// this is a function that calls all the functions passed to it
+// this is a function we could use that calls all the functions passed to it
+// from the video
 const callAllFunctions = function(...functions) {
     return function(...args) {
         functions.forEach(function(funct) {
@@ -23,15 +24,18 @@ function useToggle() {
   const togglerProps = {'aria-pressed': on};
 
   // extra 1
-  const getTogglerProps = function({onClick, ...options}) {
+  const getTogglerProps = function({onClick, ...options} = {}) {
         return {
             ...togglerProps,
-            onClick: callAllFunctions(toggle, onClick),
+            onClick: function() {
+                onClick && onClick(); // if we have been passed an onClick function in the options call that
+                toggle(); // always call the default toggle
+            },
             ...options
         }
   };
   return {on, toggle, getTogglerProps};
-}
+};
 
 // function App() {
 //   const {on, togglerProps} = useToggle()
