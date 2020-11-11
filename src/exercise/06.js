@@ -32,7 +32,8 @@ function useToggle({
   // 🐨 add an `on` option here
   // 💰 you can alias it to `controlledOn` to avoid "variable shadowing."
     onChange,
-    on: controlledOn
+    on: controlledOn,
+    readOnly = false // extra 1 - add readOnly
 } = {}) {
   const {current: initialState} = React.useRef({on: initialOn})
   const [state, dispatch] = React.useReducer(reducer, initialState)
@@ -43,6 +44,13 @@ function useToggle({
   // 🐨 Replace the next line with assigning `on` to `controlledOn` if
   // `onIsControlled`, otherwise, it should be `state.on`.
   const on = onIsControlled ? controlledOn : state.on;
+
+  // extra 1
+  React.useEffect(() => {
+    if (onIsControlled && !onChange && !readOnly) {
+        console.error("Warning: Failed prop type: You provided an `on` prop to useToggle without an `onChange` handler. This will render a read-only Toggle.")
+    }
+  }, [onIsControlled, onChange, readOnly]);
 
   // We want to call `onChange` any time we need to make a state change, but we
   // only want to call `dispatch` if `!onIsControlled` (otherwise we could get
@@ -102,8 +110,8 @@ function useToggle({
   }
 }
 
-function Toggle({on: controlledOn, onChange}) {
-  const {on, getTogglerProps} = useToggle({on: controlledOn, onChange})
+function Toggle({on: controlledOn, onChange, readOnly}) {
+  const {on, getTogglerProps} = useToggle({on: controlledOn, onChange, readOnly})
   const props = getTogglerProps({on})
   return <Switch {...props} />
 }
