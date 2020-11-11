@@ -27,7 +27,7 @@ function useToggle() {
   const getTogglerProps = function({onClick, ...options} = {}) {
         return {
             ...togglerProps,
-            onClick: function() {
+            onClick: function() { // or could use callAllFunctions(onClick, toggle)
                 onClick && onClick(); // if we have been passed an onClick function in the options call that
                 toggle(); // always call the default toggle
             },
