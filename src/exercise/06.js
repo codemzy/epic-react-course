@@ -25,6 +25,54 @@ function toggleReducer(state, {type, initialState}) {
   }
 }
 
+// extra 3 - custom hooks for validations
+function useControlWarnings(controlPropValue, controlPropName, componentName) {
+    // extra 2 - check for chnages to controlled component
+    const isControlled = controlPropValue != null
+    const {current: wasControlled} = React.useRef(isControlled);
+
+    React.useEffect(() => {
+        // extra 2
+        if (!wasControlled && isControlled) {
+            console.error(`Warning: A component is changing an uncontrolled '${controlPropName}' prop to be controlled (${componentName})`);
+        } else if (wasControlled && !isControlled) {
+            console.error(`Warning: A component is changing an controlled '${controlPropName}' to be uncontrolled (${componentName})`);
+        }
+    }, [isControlled, wasControlled, controlPropName, componentName]);
+};
+
+function useReadOnlyWarnings(
+  controlPropValue,
+  controlPropName,
+  componentName,
+  hasOnChange,
+  readOnly,
+  readOnlyProp,
+  initialValueProp,
+  onChangeProp) {
+
+  // check if component is controlled
+  const isControlled = controlPropValue != null;
+
+  React.useEffect(() => {
+    
+    // extra 1
+    if (isControlled && !hasOnChange && !readOnly) {
+        console.error(`Warning: A \`${controlPropName}\` prop was provided to \`${componentName}\` without an \`${onChangeProp}\` handler. This will result in a read-only \`${controlPropName}\` value. If you want it to be mutable, use \`${initialValueProp}\`. Otherwise, set either \`${onChangeProp}\` or \`${readOnlyProp}\`.`);
+    }
+  }, [
+        isControlled,
+        controlPropName,
+        componentName,
+        hasOnChange,
+        readOnly,
+        readOnlyProp,
+        initialValueProp,
+        onChangeProp
+    ]);
+
+};
+
 function useToggle({
   initialOn = false,
   reducer = toggleReducer,
@@ -45,21 +93,9 @@ function useToggle({
   // `onIsControlled`, otherwise, it should be `state.on`.
   const on = onIsControlled ? controlledOn : state.on;
 
-  // extra 2 - check for chnages to controlled component
-  const {current: onWasControlled} = React.useRef(onIsControlled);
-
-  React.useEffect(() => {
-    // extra 1
-    if (onIsControlled && !onChange && !readOnly) {
-        console.error("Warning: Failed prop type: You provided an `on` prop to useToggle without an `onChange` handler. This will render a read-only Toggle.");
-    }
-    // extra 2
-    if (!onWasControlled && onIsControlled) {
-        console.error("Warning: A component is changing an uncontrolled Toggle to be controlled (useToggle)");
-    } else if (onWasControlled && !onIsControlled) {
-        console.error("Warning: A component is changing an controlled Toggle to be uncontrolled (useToggle)");
-    }
-  }, [onIsControlled, onChange, readOnly, onWasControlled]);
+  // extra 3 - custom hooks
+  useControlWarnings(controlledOn, 'on', 'useToggle');
+  useReadOnlyWarnings(controlledOn, 'on', 'useToggle', Boolean(onChange), readOnly, 'readOnly', 'initialOn', 'onChange');
 
   // We want to call `onChange` any time we need to make a state change, but we
   // only want to call `dispatch` if `!onIsControlled` (otherwise we could get
