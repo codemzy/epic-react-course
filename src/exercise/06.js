@@ -69,10 +69,9 @@ function useToggle({
   // so keep that in mind when you call it! How could you avoid calling it if it's not passed?
   function dispatchWithOnChange(action) {
       if (!onIsControlled) {
-          dispatch(action);
-      } else {
-          onChange(reducer({...state, on}, action), action);
+          dispatch(action); // only dispatch if we are not controlling on 
       }
+      onChange?.(reducer({...state, on}, action), action); // conditionally call the onChange so only calls if defined
   }
 
   // make these call `dispatchWithOnChange` instead
