@@ -12,6 +12,11 @@ const Globe = React.lazy(() => import('../globe'))
 function App() {
   const [showGlobe, setShowGlobe] = React.useState(false)
 
+  // extra 1
+  function loadGlobe() {
+      return import('../globe');
+  };
+
   // 🐨 wrap the code below in a <React.Suspense /> component
   // with a fallback.
   // 💰 try putting it in a few different places and observe how that
@@ -27,7 +32,7 @@ function App() {
         padding: '2rem',
       }}
     >
-      <label style={{marginBottom: '1rem'}}>
+      <label style={{marginBottom: '1rem'}} onMouseOver={loadGlobe} onFocus={loadGlobe}>
         <input
           type="checkbox"
           checked={showGlobe}
