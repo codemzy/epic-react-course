@@ -21,8 +21,10 @@ function Menu({
           getItemProps={getItemProps}
           item={item}
           index={index}
-          selectedItem={selectedItem}
-          highlightedIndex={highlightedIndex}
+          isSelected={selectedItem?.id === item.id} // extra 2
+          isHighlighted={highlightedIndex === index} // extra 2
+        //   selectedItem={selectedItem}
+        //   highlightedIndex={highlightedIndex}
         >
           {item.name}
         </ListItem>
@@ -37,12 +39,12 @@ function ListItem({
   getItemProps,
   item,
   index,
-  selectedItem,
-  highlightedIndex,
+  isSelected,
+  isHighlighted,
+//   selectedItem,
+//   highlightedIndex,
   ...props
 }) {
-  const isSelected = selectedItem?.id === item.id
-  const isHighlighted = highlightedIndex === index
   return (
     <li
       {...getItemProps({
@@ -57,18 +59,23 @@ function ListItem({
     />
   )
 }
-// 🐨 Memoize the ListItem here using React.memo // extra 1 comparative function as second argument to memo
-ListItem = React.memo(ListItem, function(prevProps, nextProps) {
-    // added from video - guess we also need to check if other props have changed like the index or whatever 
-    // which is what react memo would do if we didnt pass this function apparently
-    if (prevProps.getItemProps !== nextProps.getItemProps) return false;
-    if (prevProps.item !== nextProps.item) return false;
-    if (prevProps.index !== nextProps.index) return false;
-    if (prevProps.selectedItem !== nextProps.selectedItem) return false;
-    // return true of don't want to re-render
-    // return false if was the previous highlighted item or next highlighted item
-    return prevProps.highlightedIndex !== prevProps.index && nextProps.highlightedIndex !== nextProps.index;
-});
+// 🐨 Memoize the ListItem here using React.memo 
+// extra 2 only take isSelected and isHighlighted so only passing props that change when needs
+// re-render so can use standard memo again
+ListItem = React.memo(ListItem);
+
+// // extra 1 comparative function as second argument to memo
+// ListItem = React.memo(ListItem, function(prevProps, nextProps) {
+//     // added from video - guess we also need to check if other props have changed like the index or whatever 
+//     // which is what react memo would do if we didnt pass this function apparently
+//     if (prevProps.getItemProps !== nextProps.getItemProps) return false;
+//     if (prevProps.item !== nextProps.item) return false;
+//     if (prevProps.index !== nextProps.index) return false;
+//     if (prevProps.selectedItem !== nextProps.selectedItem) return false;
+//     // return true of don't want to re-render
+//     // return false if was the previous highlighted item or next highlighted item
+//     return prevProps.highlightedIndex !== prevProps.index && nextProps.highlightedIndex !== nextProps.index;
+// });
 
 function App() {
   const forceRerender = useForceRerender()
