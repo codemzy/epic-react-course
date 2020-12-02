@@ -60,18 +60,16 @@ function ListItem({
 function App() {
   const forceRerender = useForceRerender()
   const [inputValue, setInputValue] = React.useState('')
-  const {data, run} = useAsync(); // extra 2
+  const {data : allItems, run} = useAsync({ data: [], status: 'pending'}); // extra 2 - alias data to allItems and set defaults to empty array
 
   // extra 2
   React.useEffect(() => {
     run(getItems(inputValue))
   }, [inputValue, run]);
 
-  const allItems = data;
-
   // 🐨 wrap getItems in a call to `React.useMemo`
   // const allItems = React.useMemo(() => getItems(inputValue), [inputValue]);
-  const items = allItems ? allItems.slice(0, 100) : [];
+  const items = allItems.slice(0, 100);
 
   const {
     selectedItem,
