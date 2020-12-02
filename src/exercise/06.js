@@ -114,9 +114,17 @@ function Grid() {
 }
 Grid = React.memo(Grid)
 
+// extra 2 - because context changes mean consumers will rerender
+// we move the context logic to cell and the more expensive work to CellImpl which wont re-render each time context changes
+// and will now only rerender if it needs to (because its props change)
 function Cell({row, column}) {
   const state = useAppState()
   const cell = state.grid[row][column]
+  return <CellImpl cell={cell} row={row} column={column} />
+}
+Cell = React.memo(Cell)
+
+function CellImpl({cell, row, column}) {
   const dispatch = useAppDispatch()
   const handleClick = () => dispatch({type: 'UPDATE_GRID_CELL', row, column})
   return (
@@ -132,7 +140,8 @@ function Cell({row, column}) {
     </button>
   )
 }
-Cell = React.memo(Cell)
+CellImpl = React.memo(CellImpl)
+// end of extra 2
 
 function DogNameInput() {
   // 🐨 replace the useAppState and useAppDispatch with a normal useState here
