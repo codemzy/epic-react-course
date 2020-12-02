@@ -12,6 +12,8 @@ import {
 
 const AppStateContext = React.createContext()
 const AppDispatchContext = React.createContext()
+// extra 1
+const DogContext = React.createContext()
 
 const initialGrid = Array.from({length: 100}, () =>
   Array.from({length: 100}, () => Math.random() * 100),
@@ -67,6 +69,34 @@ function useAppDispatch() {
   return context
 }
 
+// extra 1
+function dogReducer(state, action) {
+  switch (action.type) {
+    case 'TYPED_IN_DOG_INPUT': {
+      return {...state, dogName: action.dogName}
+    }
+    default: {
+      throw new Error(`Unhandled action type: ${action.type}`)
+    }
+  }
+};
+
+function DogProvider(props) {
+  const [state, dispatch] = React.useReducer(dogReducer, { dogName: '' });
+  const value = [state, dispatch]
+    return (
+        <DogContext.Provider value={value} {...props} />
+    )
+};
+
+function useDogState() {
+  const context = React.useContext(DogContext)
+  if (!context) {
+    throw new Error('useDogState must be used within the DogProvider')
+  }
+  return context
+};
+
 function Grid() {
   const dispatch = useAppDispatch()
   const [rows, setRows] = useDebouncedState(50)
@@ -108,13 +138,14 @@ Cell = React.memo(Cell)
 function DogNameInput() {
   // 🐨 replace the useAppState and useAppDispatch with a normal useState here
   // to manage the dogName locally within this component
-  const [dogName, setDogName] = React.useState();
+  // const [dogName, setDogName] = React.useState();
+  const [{dogName}, dispatch] = useDogState(); // extra 1
 
   function handleChange(event) {
     const newDogName = event.target.value
     // 🐨 change this to call your state setter that you get from useState
-    // dispatch({type: 'TYPED_IN_DOG_INPUT', dogName: newDogName})
-    setDogName(newDogName);
+    dispatch({type: 'TYPED_IN_DOG_INPUT', dogName: newDogName}) // extra 1
+    // setDogName(newDogName);
   }
 
   return (
@@ -139,12 +170,10 @@ function App() {
   return (
     <div className="grid-app">
       <button onClick={forceRerender}>force rerender</button>
-      <AppProvider>
         <div>
-          <DogNameInput />
-          <Grid />
+          <DogProvider><DogNameInput /></DogProvider>
+          <AppProvider><Grid /></AppProvider>
         </div>
-      </AppProvider>
     </div>
   )
 }
