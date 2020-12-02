@@ -7,15 +7,11 @@ import * as React from 'react'
 
 // 🐨 use React.lazy to create a Globe component which using a dynamic import
 // to get the Globe component from the '../globe' module.
-const Globe = React.lazy(() => import('../globe'))
+const loadGlobe = () => import('../globe'); // extra 1
+const Globe = React.lazy(loadGlobe);
 
 function App() {
   const [showGlobe, setShowGlobe] = React.useState(false)
-
-  // extra 1
-  function loadGlobe() {
-      return import('../globe');
-  };
 
   // 🐨 wrap the code below in a <React.Suspense /> component
   // with a fallback.
