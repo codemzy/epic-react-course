@@ -114,17 +114,29 @@ function Grid() {
 }
 Grid = React.memo(Grid)
 
+
+// extra 3 - hoc
+function withStateSlice(Component, stateSlice) {
+    const MemoComponent = React.memo(Component);
+    function Wrapper(props) {
+        const state = useAppState()
+        return <MemoComponent state={stateSlice(state, props)} {...props} />
+    }
+    Wrapper = React.memo(Wrapper);
+    return Wrapper;
+}
+
 // extra 2 - because context changes mean consumers will rerender
 // we move the context logic to cell and the more expensive work to CellImpl which wont re-render each time context changes
 // and will now only rerender if it needs to (because its props change)
-function Cell({row, column}) {
-  const state = useAppState()
-  const cell = state.grid[row][column]
-  return <CellImpl cell={cell} row={row} column={column} />
-}
-Cell = React.memo(Cell)
+// function Cell({row, column}) {
+//   const state = useAppState()
+//   const cell = state.grid[row][column]
+//   return <CellImpl cell={cell} row={row} column={column} />
+// }
+// Cell = React.memo(Cell)
 
-function CellImpl({cell, row, column}) {
+function Cell({state: cell, row, column}) {
   const dispatch = useAppDispatch()
   const handleClick = () => dispatch({type: 'UPDATE_GRID_CELL', row, column})
   return (
@@ -140,7 +152,9 @@ function CellImpl({cell, row, column}) {
     </button>
   )
 }
-CellImpl = React.memo(CellImpl)
+Cell = withStateSlice(Cell, function(state, {row, column}) {
+    return state.grid[row][column];
+})
 // end of extra 2
 
 function DogNameInput() {
