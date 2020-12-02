@@ -122,8 +122,8 @@ function withStateSlice(Component, stateSlice) {
         const state = useAppState()
         return <MemoComponent state={stateSlice(state, props)} {...props} />
     }
-    Wrapper = React.memo(Wrapper);
-    return Wrapper;
+    Wrapper.displayName = `withStateSlice(${Component.displayName || Component.name})`; // added display name for component tab
+    return React.memo(Wrapper);
 }
 
 // extra 2 - because context changes mean consumers will rerender
