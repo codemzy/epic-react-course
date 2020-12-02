@@ -118,12 +118,12 @@ Grid = React.memo(Grid)
 // extra 3 - hoc
 function withStateSlice(Component, stateSlice) {
     const MemoComponent = React.memo(Component);
-    function Wrapper(props) {
+    function Wrapper(props, ref) {
         const state = useAppState()
-        return <MemoComponent state={stateSlice(state, props)} {...props} />
+        return <MemoComponent ref={ref} state={stateSlice(state, props)} {...props} />
     }
     Wrapper.displayName = `withStateSlice(${Component.displayName || Component.name})`; // added display name for component tab
-    return React.memo(Wrapper);
+    return React.memo(React.forwardRef(Wrapper));
 }
 
 // extra 2 - because context changes mean consumers will rerender
