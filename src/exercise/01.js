@@ -37,7 +37,11 @@ function App() {
         {' show globe'}
       </label>
       <div style={{width: 400, height: 400}}>
-        <React.Suspense fallback={<div>loading...</div>}>{showGlobe ? <Globe /> : null}</React.Suspense>
+        <React.Suspense fallback={<div>loading...</div>}>
+            {showGlobe ? // best to put react suspense outside the ternary so that its not rerendering each time with the globe component - fine now but future suspense performance improvements
+                <Globe /> : null
+            }
+        </React.Suspense>
       </div>
     </div>
   )
