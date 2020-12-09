@@ -21,11 +21,19 @@ test('counter increments and decrements when the buttons are clicked', () => {
   // 🐨 expect the message.textContent toBe 'Current count: 0'
   expect(message.textContent).toBe('Current count: 0');
   // 🐨 click the increment button (💰 increment.click())
-  increment.click();
+  //increment.click();
+  // extra 1
+  var clickEvent = new MouseEvent("click", {
+    bubbles: true,
+    cancelable: true,
+    button: 0 // main button 
+  });
+  increment.dispatchEvent(clickEvent);
   // 🐨 assert the message.textContent
   expect(message.textContent).toBe('Current count: 1');
   // 🐨 click the decrement button (💰 decrement.click())
-  decrement.click();
+  // decrement.click();
+  decrement.dispatchEvent(clickEvent);
   // 🐨 assert the message.textContent
   expect(message.textContent).toBe('Current count: 0');
   // 🐨 cleanup by removing the div from the page (💰 div.remove())
