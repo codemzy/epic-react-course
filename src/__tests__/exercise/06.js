@@ -7,24 +7,24 @@ import Location from '../../examples/location'
 import {useCurrentPosition} from 'react-use-geolocation';
 
 // extra 1 - alternative mock the function instead of the api
-jest.mock('react-use-geolocation'); // will mock all the export functions from this module as jest mock functions
+// jest.mock('react-use-geolocation'); // will mock all the export functions from this module as jest mock functions
 
-// // 🐨 set window.navigator.geolocation to an object that has a getCurrentPosition mock function
-// beforeAll(() => {
-//     window.navigator.geolocation = {
-//         getCurrentPosition: jest.fn().mockImplementation()
-//     }
-// });
-// // 💰 I'm going to give you this handy utility function
-// // it allows you to create a promise that you can resolve/reject on demand.
-// function deferred() {
-//   let resolve, reject
-//   const promise = new Promise((res, rej) => {
-//     resolve = res
-//     reject = rej
-//   })
-//   return {promise, resolve, reject}
-// }
+// 🐨 set window.navigator.geolocation to an object that has a getCurrentPosition mock function
+beforeAll(() => {
+    window.navigator.geolocation = {
+        getCurrentPosition: jest.fn().mockImplementation()
+    }
+});
+// 💰 I'm going to give you this handy utility function
+// it allows you to create a promise that you can resolve/reject on demand.
+function deferred() {
+  let resolve, reject
+  const promise = new Promise((res, rej) => {
+    resolve = res
+    reject = rej
+  })
+  return {promise, resolve, reject}
+}
 // 💰 Here's an example of how you use this:
 // const {promise, resolve, reject} = deferred()
 // promise.then(() => {/* do something */})
@@ -43,7 +43,7 @@ test('displays the users current location', async() => {
       }
   };
   // 🐨 create a deferred promise here
-  // const {promise, resolve, reject} = deferred();
+  const {promise, resolve, reject} = deferred();
   // 🐨 Now we need to mock the geolocation's getCurrentPosition function
   // To mock something you need to know its API and simulate that in your mock:
   // 📜 https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/getCurrentPosition
@@ -57,19 +57,19 @@ test('displays the users current location', async() => {
   // 🐨 the first argument of your mock should accept a callback
   // 🐨 you'll call the callback when the deferred promise resolves
   // 💰 promise.then(() => {/* call the callback with the fake position */})
-//   window.navigator.geolocation.getCurrentPosition.mockImplementation(function(callback) {
-//       promise.then(() => {
-//           callback(fakePosition)
-//       });
-//   });
-  // custom hook
-  let setReturnValue;
-  function useMockCurrentPosition() {
-      const state = React.useState([]);
-      setReturnValue = state[1];
-      return state[0];
-  };
-  useCurrentPosition.mockImplementation(useMockCurrentPosition);
+  window.navigator.geolocation.getCurrentPosition.mockImplementation(function(callback) {
+      promise.then(() => {
+          callback(fakePosition)
+      });
+  });
+//   // custom hook - extra 1
+//   let setReturnValue;
+//   function useMockCurrentPosition() {
+//       const state = React.useState([]);
+//       setReturnValue = state[1];
+//       return state[0];
+//   };
+//   useCurrentPosition.mockImplementation(useMockCurrentPosition);
   // 🐨 now that setup is done, render the Location component itself
   //
   // 🐨 verify the loading spinner is showing up
@@ -83,13 +83,13 @@ test('displays the users current location', async() => {
   // 💰 right around here, you'll probably notice you get an error log in the
   // test output. You can ignore that for now and just add this next line:
   // act(() => {})
-//   await act(async() => {
-//       resolve();
-//       await promise
-//   }); // fixes the act warning
-  act(() => {
-      setReturnValue([fakePosition]);
+  await act(async() => {
+      resolve();
+      await promise
   }); // fixes the act warning
+//   act(() => {
+//       setReturnValue([fakePosition]);
+//   }); // extra 1
   // If you'd like, learn about what this means and see if you can figure out
   // how to make the warning go away (tip, you'll need to use async act)
   // 📜 https://kentcdodds.com/blog/fix-the-not-wrapped-in-act-warning
@@ -101,6 +101,29 @@ test('displays the users current location', async() => {
   expect(screen.getByText(/latitude/i)).toHaveTextContent(`Latitude: ${fakePosition.coords.latitude}`);
   expect(screen.getByText(/longitude/i)).toHaveTextContent(`Longitude: ${fakePosition.coords.longitude}`);
 })
+
+// extra 2
+test('extra 2 - handles errors', async() => {
+  const fakeError = new Error(
+    'Geolocation is not supported or permission denied',
+  )
+  const {promise, resolve, reject} = deferred();
+  window.navigator.geolocation.getCurrentPosition.mockImplementation(function(successCallback, errorCallback) {
+      promise.catch(() => {
+          errorCallback(fakeError);
+      });
+  });
+  render(<Location />);
+  expect(screen.getByLabelText(/loading/i)).toBeInTheDocument();
+  await act(async() => {
+      reject();
+      // await promise // not sure why we can't have this anymore? Maybe because the promise has been rejected
+         // so nothing to await, but then, when the promise was resolved we did await???
+         // maybe when it's rejects it happens immediate but resolve is async - I dunno
+  });
+  expect(screen.queryByLabelText(/loading/i)).not.toBeInTheDocument();
+  expect(screen.getByRole('alert')).toHaveTextContent(fakeError.message);
+});
 
 /*
 eslint
