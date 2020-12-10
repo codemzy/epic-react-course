@@ -5,15 +5,24 @@ import * as React from 'react'
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Login from '../../components/login'
-import faker from 'faker'; // extra 2
+// import faker from 'faker'; // extra 2
+const { build, fake } = require('@jackfranklin/test-data-bot'); // extra 4
 
-function buildLoginForm(overrides = {}) { // extra 3 allow for overrides if we want to generate a value instead
-    return {
-        username: faker.internet.userName(),
-        password: faker.internet.password(),
-        ...overrides
-    }
-};
+// function buildLoginForm(overrides = {}) { // extra 3 allow for overrides if we want to generate a value instead
+//     return {
+//         username: faker.internet.userName(),
+//         password: faker.internet.password(),
+//         ...overrides
+//     }
+// };
+
+// extra 4
+const buildLoginForm = build('User', {
+  fields: {
+    username: fake((faker) => faker.internet.userName()),
+    password: fake((faker) => faker.internet.password())
+  },
+});
 
 test('submitting the form calls onSubmit with username and password', () => {
   // 🐨 create a variable called "submittedData" and a handleSubmit function that
