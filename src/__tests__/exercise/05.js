@@ -71,7 +71,7 @@ test(`logging in displays the user's username`, async () => {
   // once the login is successful, then the loading spinner disappears and
   // we render the username.
   // 🐨 assert that the username is on the screen
-  expect(screen.getByText(username)).toBeInTheDocument
+  expect(screen.getByText(username)).toBeInTheDocument();
 })
 
 // extra 2
