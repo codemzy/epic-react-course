@@ -5,6 +5,7 @@ import * as React from 'react'
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Login from '../../components/login'
+import faker from 'faker'; // extra 2
 
 test('submitting the form calls onSubmit with username and password', () => {
   // 🐨 create a variable called "submittedData" and a handleSubmit function that
@@ -23,8 +24,8 @@ test('submitting the form calls onSubmit with username and password', () => {
 //   const password = screen.getByLabelText(/password/i);
   // 🐨 use userEvent.type to change the username and password fields to
   //    whatever you want
-  const username = "ausername";
-  const password = "apassword";
+  const username = faker.internet.userName(); // extra 2 - random username
+  const password = faker.internet.password(); // extra 2 - random password
   userEvent.type(screen.getByLabelText(/username/i), username);
   userEvent.type(screen.getByLabelText(/password/i), password);
   // 🐨 click on the button with the text "Submit"
