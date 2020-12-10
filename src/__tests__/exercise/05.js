@@ -101,9 +101,6 @@ test(`any other error from the server results in an error`, async () => {
   )
   // run the test
   render(<Login />)
-  const {username, password} = buildLoginForm()
-  userEvent.type(screen.getByLabelText(/username/i), username)
-  userEvent.type(screen.getByLabelText(/password/i), password)
   userEvent.click(screen.getByRole('button', {name: /submit/i})) // make the request
   await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
   expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
