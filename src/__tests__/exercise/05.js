@@ -1,6 +1,8 @@
 // mocking HTTP requests
 // http://localhost:3000/login-submission
 
+import {handlers} from '../../test/server-handlers.js'; // extra 1
+
 import * as React from 'react'
 // 🐨 you'll need to grab waitForElementToBeRemoved from '@testing-library/react'
 import {render, screen, waitForElementToBeRemoved} from '@testing-library/react'
@@ -26,22 +28,25 @@ const buildLoginForm = build({
 // )
 // you'll want to respond with an JSON object that has the username.
 // 📜 https://mswjs.io/
-const server = setupServer(
-    rest.post(
-        'https://auth-provider.example.com/api/login',
-        async (req, res, ctx) => {
-            if (!req.body.password) {
-                return res(ctx.status(400), ctx.json({message: 'password required'}))
-            }
-            if (!req.body.username) {
-                return res(ctx.status(400), ctx.json({message: 'username required'}))
-            }
-            return res(
-                ctx.json({ username: req.body.username })
-            );
-        }
-    )
-);
+// const server = setupServer(
+//     rest.post(
+//         'https://auth-provider.example.com/api/login',
+//         async (req, res, ctx) => {
+//             if (!req.body.password) {
+//                 return res(ctx.status(400), ctx.json({message: 'password required'}))
+//             }
+//             if (!req.body.username) {
+//                 return res(ctx.status(400), ctx.json({message: 'username required'}))
+//             }
+//             return res(
+//                 ctx.json({ username: req.body.username })
+//             );
+//         }
+//     )
+// );
+// so we can share mock handlers with node tests and front end tests
+// this is like using the handlers from backend here in the front end
+const server = setupServer(...handlers); // extra 1
 
 // 🐨 before all the tests, start the server with `server.listen()`
 // 🐨 after all the tests, stop the server with `server.close()`
