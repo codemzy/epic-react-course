@@ -82,3 +82,27 @@ test(`logging in without a password fails and results in an error`, async () => 
     await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i));
     expect(screen.getByRole('alert')).toHaveTextContent(/password required/i);
 });
+
+// extra 3
+test(`any other error from the server results in an error`, async () => {
+    // custom server for this test
+    server.use(
+        rest.post(
+            // note that it's the same URL as our app-wide handler
+            // so this will override the other.
+            'https://auth-provider.example.com/api/login',
+            async (req, res, ctx) => {
+                // your one-off handler here
+                return res(ctx.status(500), ctx.json({message: 'some random error'}));
+            },
+        ),
+    )
+    // run the test
+    render(<Login />)
+    const {username, password} = buildLoginForm(); 
+    userEvent.type(screen.getByLabelText(/username/i), username);
+    userEvent.type(screen.getByLabelText(/password/i), password)
+    userEvent.click(screen.getByRole('button', {name: /submit/i})); // make the request
+    await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i));
+    expect(screen.getByRole('alert')).toHaveTextContent(/some random error/i);
+});
