@@ -22,6 +22,13 @@ function Count() {
     );
 }
 
+// extra 2
+const results = {}
+function TestComponent(props) {
+  Object.assign(results, useCounter(props))
+  return null
+}
+
 test('exposes the count and increment/decrement functions', () => {
   // 🐨 render the component
   render(<Count />);
@@ -51,6 +58,24 @@ test('exposes the count and increment/decrement functions', () => {
   expect(result.count).toBe(1);
   act(() => {result.decrement()});
   expect(result.count).toBe(0);
+})
+
+// extra 2
+test('allows customization of the initial count', () => {
+    render(<TestComponent initialCount={5} />);
+    expect(results.count).toBe(5);
+    act(() => {results.increment()});
+    expect(results.count).toBe(6);
+})
+
+// extra 2
+test('allows customization of the step', () => { 
+    render(<TestComponent step={10} />);
+    expect(results.count).toBe(0);
+    act(() => {results.increment()});
+    expect(results.count).toBe(10);
+    act(() => {results.decrement()});
+    expect(results.count).toBe(0);
 })
 
 /* eslint no-unused-vars:0 */
