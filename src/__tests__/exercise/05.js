@@ -106,5 +106,7 @@ test(`any other error from the server results in an error`, async () => {
   userEvent.type(screen.getByLabelText(/password/i), password)
   userEvent.click(screen.getByRole('button', {name: /submit/i})) // make the request
   await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
-  expect(screen.getByRole('alert')).toHaveTextContent(/some random error/i)
+  expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
+    `"some random error"`,
+  )
 })
