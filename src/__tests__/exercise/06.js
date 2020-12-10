@@ -29,7 +29,7 @@ function deferred() {
 // await promise
 // // assert on the resolved state
 
-test('displays the users current location', async () => {
+test('displays the users current location', async() => {
   // 🐨 create a fakePosition object that has an object called "coords" with latitude and longitude
   // 📜 https://developer.mozilla.org/en-US/docs/Web/API/GeolocationPosition
   const fakePosition = {
@@ -54,7 +54,9 @@ test('displays the users current location', async () => {
   // 🐨 you'll call the callback when the deferred promise resolves
   // 💰 promise.then(() => {/* call the callback with the fake position */})
   window.navigator.geolocation.getCurrentPosition.mockImplementation(function(callback) {
-      promise.then(() => {callback(fakePosition)});
+      promise.then(() => {
+          callback(fakePosition)
+      });
   });
   // 🐨 now that setup is done, render the Location component itself
   //
@@ -64,12 +66,15 @@ test('displays the users current location', async () => {
    expect(screen.getByLabelText(/loading/i)).toBeInTheDocument();
   // 🐨 resolve the deferred promise
   // 🐨 wait for the promise to resolve
-  resolve();
-  await promise;
+  // resolve();
+  // await promise; // gets act warning
   // 💰 right around here, you'll probably notice you get an error log in the
   // test output. You can ignore that for now and just add this next line:
   // act(() => {})
-  act(() => {});
+  await act(async() => {
+      resolve();
+      await promise
+  }); // fixes the act warning
   // If you'd like, learn about what this means and see if you can figure out
   // how to make the warning go away (tip, you'll need to use async act)
   // 📜 https://kentcdodds.com/blog/fix-the-not-wrapped-in-act-warning
