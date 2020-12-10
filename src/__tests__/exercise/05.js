@@ -52,6 +52,7 @@ const server = setupServer(...handlers) // extra 1
 // 🐨 after all the tests, stop the server with `server.close()`
 beforeAll(() => server.listen())
 afterAll(() => server.close())
+afterEach(() => server.resetHandlers()); // extra 4 so custom handler gets removed
 
 test(`logging in displays the user's username`, async () => {
   render(<Login />)
