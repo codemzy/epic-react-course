@@ -88,6 +88,7 @@ test(`logging in without a password fails and results in an error`, async () => 
 
 // extra 4
 test(`any other error from the server results in an error`, async () => {
+  const testErrorMessage = 'some random error';
   // custom server for this test
   server.use(
     rest.post(
@@ -96,7 +97,7 @@ test(`any other error from the server results in an error`, async () => {
       'https://auth-provider.example.com/api/login',
       async (req, res, ctx) => {
         // your one-off handler here
-        return res(ctx.status(500), ctx.json({message: 'some random error'}))
+        return res(ctx.status(500), ctx.json({message: testErrorMessage}))
       },
     ),
   )
@@ -104,7 +105,5 @@ test(`any other error from the server results in an error`, async () => {
   render(<Login />)
   userEvent.click(screen.getByRole('button', {name: /submit/i})) // make the request
   await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
-  expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
-    `"some random error"`,
-  )
+  expect(screen.getByRole('alert')).toHaveTextContent(testErrorMessage);
 })
