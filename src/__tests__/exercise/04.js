@@ -33,6 +33,7 @@ test('submitting the form calls onSubmit with username and password', () => {
   // 💰 use `toEqual` from Jest: 📜 https://jestjs.io/docs/en/expect#toequalvalue
   // expect(submittedData).toEqual({ username, password });
   expect(handleSubmit).toHaveBeenCalledWith({ username, password }); // extra 1
+  expect(handleSubmit).toHaveBeenCalledTimes(1); // checks its only been called once
 })
 
 /*
