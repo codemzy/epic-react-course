@@ -27,3 +27,20 @@ https://github.com/kentcdodds/react-fundamentals
 
 ## Hooks
 https://github.com/kentcdodds/react-hooks
+
+## Advanced Hooks
+https://github.com/kentcdodds/advanced-react-hooks
+
+## Advanced Patterns
+https://github.com/kentcdodds/advanced-react-patterns
+
+## Performance
+https://github.com/kentcdodds/react-performance
+
+## Testing
+https://github.com/kentcdodds/testing-react-apps
+
+## Suspense
+https://github.com/kentcdodds/react-suspense
+
+
