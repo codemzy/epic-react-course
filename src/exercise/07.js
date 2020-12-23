@@ -71,7 +71,7 @@ function App() {
           onReset={handleReset}
           resetKeys={[pokemonResource]}
         >
-        <React.SuspenseList revealOrder="forwards">
+        <React.SuspenseList revealOrder="forwards" tail="collapsed">
           <React.Suspense fallback={fallback}>
             <NavBar pokemonResource={pokemonResource} />
           </React.Suspense>
