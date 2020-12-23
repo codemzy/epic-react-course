@@ -61,16 +61,19 @@ function usePokemonResourceCache() {
     return context;
 };
 
-// extra 2 (extra 3 - cacheTime)
+// extra 2 (extra 3 - cacheTime defaults to 5000 but can be configured)
 function PokemonCacheProvider({cacheTime = 5000, children}) {
     const cache = React.useRef({});
+    const timestamps = React.useRef({})
     const getPokemonResource = React.useCallback((name) => {
         const time = Date.now();
         const lowerName = name.toLowerCase();
         let resource = cache.current[lowerName];
-        if (!resource || !resource.time || time - resource.time > cacheTime) {
+        let timestamp = timestamps.current[lowerName];
+        if (!resource || !timestamp || time - timestamp > cacheTime) {
             resource = createPokemonResource(lowerName);
-            cache.current[lowerName] = { ...resource, time }; // add time so can check if stale (extra 3)
+            cache.current[lowerName] = resource;
+            timestamps.current[lowerName] = time; // add time so can check if stale (extra 3)
         }
         return resource;
     }, []);
@@ -133,7 +136,7 @@ function App() {
 
 function AppWithProvider() {
     return (
-        <PokemonCacheProvider><App /></PokemonCacheProvider>
+        <PokemonCacheProvider cacheTime={6000}><App /></PokemonCacheProvider>
     )
 };
 
