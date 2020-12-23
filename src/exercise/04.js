@@ -30,31 +30,55 @@ const SUSPENSE_CONFIG = {
 }
 
 // 🐨 create a pokemonResourceCache object
-const pokemonResourceCache = {};
+// const pokemonResourceCache = {};
 
-// 🐨 create a getPokemonResource function which accepts a name checks the cache
-// for an existing resource. If there is none, then it creates a resource
-// and inserts it into the cache. Finally the function should return the
-// resource.
-const getPokemonResource = function(name) {
-    const lowerName = name.toLowerCase();
-    let resource = pokemonResourceCache[lowerName];
-    if (!resource) {
-        resource = createPokemonResource(lowerName);
-        pokemonResourceCache[lowerName] = resource;
-    }
-    return resource;
-}
+// // 🐨 create a getPokemonResource function which accepts a name checks the cache
+// // for an existing resource. If there is none, then it creates a resource
+// // and inserts it into the cache. Finally the function should return the
+// // resource.
+// function getPokemonResource(name) {
+//     const lowerName = name.toLowerCase();
+//     let resource = pokemonResourceCache[lowerName];
+//     if (!resource) {
+//         resource = createPokemonResource(lowerName);
+//         pokemonResourceCache[lowerName] = resource;
+//     }
+//     return resource;
+// }
 
 function createPokemonResource(pokemonName) {
   return createResource(fetchPokemon(pokemonName))
 }
 
 // extra 1
-const pokemonCacheContext = React.createContext(getPokemonResource);
+const pokemonCacheContext = React.createContext();
 
 function usePokemonResourceCache() {
-  return React.useContext(pokemonCacheContext)
+    let context = React.useContext(pokemonCacheContext);
+    if (!context) {
+        throw new Error("usePokemonResourceCache should be used within a PokemonCacheProvider");
+    }
+    return context;
+};
+
+// extra 2
+function PokemonCacheProvider({children}) {
+    const cache = React.useRef({});
+    const getPokemonResource = React.useCallback((name) => {
+        const lowerName = name.toLowerCase();
+        let resource = cache.current[lowerName];
+        if (!resource) {
+            resource = createPokemonResource(lowerName);
+            cache.current[lowerName] = resource;
+        }
+        return resource;
+    }, []);
+
+    return (
+        <pokemonCacheContext.Provider value={getPokemonResource}>
+            {children}
+        </pokemonCacheContext.Provider>
+    );
 };
 
 function App() {
@@ -106,4 +130,10 @@ function App() {
   )
 }
 
-export default App
+function AppWithProvider() {
+    return (
+        <PokemonCacheProvider><App /></PokemonCacheProvider>
+    )
+};
+
+export default AppWithProvider
