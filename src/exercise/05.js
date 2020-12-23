@@ -1,16 +1,20 @@
 // Suspense Image
 // http://localhost:3000/isolated/exercise/05.js
-
 import * as React from 'react'
 import {
   fetchPokemon,
   getImageUrlForPokemon, // extra 1
   PokemonInfoFallback,
   PokemonForm,
-  PokemonDataView,
+  // PokemonDataView,
   PokemonErrorBoundary,
 } from '../pokemon'
 import {createResource} from '../utils'
+
+// extra 2
+const PokemonInfo = React.lazy(() =>
+  import('../lazy/pokemon-info-render-as-you-fetch'),
+)
 
 // ❗❗❗❗
 // 🦉 On this one, make sure that you UNCHECK the "Disable cache" checkbox
@@ -20,7 +24,7 @@ import {createResource} from '../utils'
 
 // we need to make a place to store the resources outside of render so
 // 🐨 create "cache" object here.
-const imgSrcResourceCache = {};
+// const imgSrcResourceCache = {};
 
 // 🐨 create an Img component that renders a regular <img /> and accepts a src
 // prop and forwards on any remaining props.
@@ -47,18 +51,18 @@ function preloadImage(src) {
 //     return <img src={imgSrcResource.read()} {...props} />;
 // };
 
-function PokemonInfo({pokemonResource}) {
-  const pokemon = pokemonResource.data.read()
-  return (
-    <div>
-      <div className="pokemon-info__img-wrapper">
-        {/* 🐨 swap this img for your new Img component */}
-        <img src={pokemonResource.image.read()} alt={pokemon.name} />
-      </div>
-      <PokemonDataView pokemon={pokemon} />
-    </div>
-  )
-}
+// function PokemonInfo({pokemonResource}) {
+//   const pokemon = pokemonResource.data.read()
+//   return (
+//     <div>
+//       <div className="pokemon-info__img-wrapper">
+//         {/* 🐨 swap this img for your new Img component */}
+//         <img src={pokemonResource.image.read()} alt={pokemon.name} />
+//       </div>
+//       <PokemonDataView pokemon={pokemon} />
+//     </div>
+//   )
+// }
 
 const SUSPENSE_CONFIG = {
   timeoutMs: 4000,

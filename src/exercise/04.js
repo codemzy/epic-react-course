@@ -76,7 +76,7 @@ function PokemonCacheProvider({cacheTime = 5000, children}) {
             timestamps.current[lowerName] = time; // add time so can check if stale (extra 3)
         }
         return resource;
-    }, []);
+    }, [cacheTime]);
 
     return (
         <pokemonCacheContext.Provider value={getPokemonResource}>
