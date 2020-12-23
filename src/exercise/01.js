@@ -33,7 +33,7 @@ function PokemonInfo() {
   // 🐨 if there's no pokemon yet, then throw the pokemonPromise
   // 💰 (no, for real. Like: `throw pokemonPromise`)
   if (!pokemon) {
-      throw pokemonPromise;
+      throw pokemonPromise; // so react knows when to re-render (when promise is resolved)
   }
   // if the code gets it this far, then the pokemon variable is defined and
   // rendering can continue!
