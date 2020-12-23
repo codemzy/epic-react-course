@@ -3,12 +3,13 @@
 
 import * as React from 'react'
 // 🐨 you'll also need to get the fetchPokemon function from ../pokemon:
-import {PokemonDataView, fetchPokemon} from '../pokemon'
+import {PokemonDataView, fetchPokemon, PokemonErrorBoundary} from '../pokemon'
 
 // 💰 use it like this: fetchPokemon(pokemonName).then(handleSuccess, handleFailure)
 
 // 🐨 create a variable called "pokemon" (using let)
 let pokemon;
+let pokemonError; // extra 1
 // 💣 delete this now...
 // const pokemon = {
 //   name: 'TODO',
@@ -27,9 +28,15 @@ const pokemonPromise = fetchPokemon('pikachu');
 // 💰 For example: somePromise.then(resolvedValue => (someValue = resolvedValue))
 pokemonPromise.then(function(response) {
     pokemon = response;
+}).catch(function(error){
+    pokemonError = error; // extra 1
 });
 
 function PokemonInfo() {
+  // extra 1 - for error boundary
+  if (pokemonError) {
+      throw pokemonError;
+  }
   // 🐨 if there's no pokemon yet, then throw the pokemonPromise
   // 💰 (no, for real. Like: `throw pokemonPromise`)
   if (!pokemon) {
@@ -51,8 +58,10 @@ function App() {
   return (
     <div className="pokemon-info-app">
       <div className="pokemon-info">
-        {/* 🐨 Wrap the PokemonInfo component with a React.Suspense component with a fallback */}
-        <React.Suspense fallback={<div>Loading Pokemon...</div>}><PokemonInfo /></React.Suspense>
+        <PokemonErrorBoundary> {/* extra 1 */}
+            {/* 🐨 Wrap the PokemonInfo component with a React.Suspense component with a fallback */}
+            <React.Suspense fallback={<div>Loading Pokemon...</div>}><PokemonInfo /></React.Suspense>
+        </PokemonErrorBoundary>
       </div>
     </div>
   )
