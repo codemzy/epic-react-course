@@ -3,7 +3,8 @@
 
 import * as React from 'react'
 // 🐨 you'll also need to get the fetchPokemon function from ../pokemon:
-import {PokemonDataView, fetchPokemon, PokemonErrorBoundary} from '../pokemon'
+import {PokemonDataView, fetchPokemon, PokemonErrorBoundary, PokemonInfoFallback} from '../pokemon'
+import {createResource} from '../utils'; // extra 3
 
 // 💰 use it like this: fetchPokemon(pokemonName).then(handleSuccess, handleFailure)
 
@@ -20,26 +21,26 @@ import {PokemonDataView, fetchPokemon, PokemonErrorBoundary} from '../pokemon'
 //   fetchedAt: 'TODO',
 // }
 
-// extra 2
-function createResource(promise) {
-    let status = "pending";
-    let result = promise.then(function(resolved) {
-        status = "resolved";
-        result = resolved;
-    }).catch(function(error) {
-        status = "rejected";
-        result = error; // extra 1
-    });
-    return {
-        read() {
-            if (status === "pending" || status === "rejected") {
-                throw result; // throw the promise while pending or the error when rejected
-            } else if (status === "resolved") {
-                return result;
-            }
-        }
-    }
-}
+// // extra 2
+// function createResource(promise) {
+//     let status = "pending";
+//     let result = promise.then(function(resolved) {
+//         status = "resolved";
+//         result = resolved;
+//     }).catch(function(error) {
+//         status = "rejected";
+//         result = error; // extra 1
+//     });
+//     return {
+//         read() {
+//             if (status === "pending" || status === "rejected") {
+//                 throw result; // throw the promise while pending or the error when rejected
+//             } else if (status === "resolved") {
+//                 return result;
+//             }
+//         }
+//     }
+// }
 
 // extra 2
 const pokemonResource = createResource(fetchPokemon('pikachu'));
@@ -85,7 +86,7 @@ function App() {
       <div className="pokemon-info">
         <PokemonErrorBoundary> {/* extra 1 */}
             {/* 🐨 Wrap the PokemonInfo component with a React.Suspense component with a fallback */}
-            <React.Suspense fallback={<div>Loading Pokemon...</div>}><PokemonInfo /></React.Suspense>
+            <React.Suspense fallback={<PokemonInfoFallback />}><PokemonInfo /></React.Suspense>
         </PokemonErrorBoundary>
       </div>
     </div>
