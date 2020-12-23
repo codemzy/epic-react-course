@@ -71,6 +71,7 @@ function App() {
           onReset={handleReset}
           resetKeys={[pokemonResource]}
         >
+        <React.SuspenseList revealOrder="together">
           <React.Suspense fallback={fallback}>
             <NavBar pokemonResource={pokemonResource} />
           </React.Suspense>
@@ -85,6 +86,7 @@ function App() {
               <RightNav pokemonResource={pokemonResource} />
             </React.Suspense>
           </div>
+        </React.SuspenseList>
         </PokemonErrorBoundary>
       </div>
     </div>
